@@ -21,7 +21,7 @@ A local-first Zotero curation CLI and Agent Skill. One bibliographic record per 
 
 ## 安装
 
-需要 Python **3.9+**。已验证的原生写入环境为 macOS 上的 Zotero **10.0.8**。
+需要 Python **3.9+**，建议使用仍获安全维护的 Python 版本；3.9 是兼容下限。已验证的原生写入环境为 macOS 上的 Zotero **10.0.8**。
 
 ```bash
 git clone https://github.com/dull-bird/zotero-library.git
