@@ -1,9 +1,9 @@
 ---
 name: zotero-library
-description: "构建和维护本地 Zotero 文献库：从论文仓库、PDF、arXiv 或 DeepOrbit 翻译结果导入；核验作者、日期、DOI；追踪原文 vN、译文与归档修订，检查新版且保留旧 PDF；同一论文管理多附件，按主题、文献类型、年份分类。用户要求整理 Zotero、补全字段、管理论文版本、入库新翻译或建立论文知识库时默认使用，不需要用户逐条指导。"
+description: "构建和维护本地 Zotero 文献库：核验元数据、追踪原文及译文版本、一篇多 PDF、多维分类；支持 arXiv、论文仓库和 DeepOrbit。论文翻译执行方式可选当前 agent 或用户指定 CLI，未选择先询问。用户要求整理 Zotero、管理版本、配置论文翻译模型或入库新译文时使用。"
 compatibility: "Python 3.9+ standard library. Native writes verified with Zotero 10.0.8 desktop on macOS; other releases/platforms require review. No cloud account, MCP server, embedding model or third-party Zotero plugin required."
 metadata:
-  version: "1.1.1"
+  version: "1.2.0"
   default-mode: "agent-operated-additive-curation"
 ---
 
@@ -63,6 +63,14 @@ Subsequent routine syncs may use `sync ... --apply`. Cache official metadata, fe
 Missing IDs must be established by matching the PDF's **full title and authors** to an authoritative record. Supply an `--overrides` JSON keyed by relative PDF path with `arxiv_id`, `identity_title`, and an `evidence` description of what was inspected. A short method name or a filename is insufficient. Preserve translation dates and unknown translation-version status separately.
 
 Conflicts stay unchanged and receive a review tag. Targeted approval format is `{"arxiv:1234.56789": ["itemType"]}`; pass it with `--approvals` only after explicit authority for those precise changes. Never manufacture blanket approval to suppress warnings.
+
+## Before starting a new translation
+
+Read [translation.md](references/translation.md), then run `translation show` / `translation route`. Fresh installs have **no selected translation backend**. On `TRANSLATION_CHOICE_REQUIRED`, ask whether to use the current agent's model or a user-specified CLI; save only the user's explicit choice via `translation set`. If they already specified the choice, do not ask redundantly. Do not ask this question for importing existing translations or metadata-only work.
+
+In `agent` mode, use the calling agent; never invent its model ID. In `cli` mode, invoke only the user-confirmed argument vector and stdin/stdout contract returned by the route, with the task's bounded input and workspace. The router does not execute anything itself. A missing CLI, authentication error or failed model call is a stop condition, not permission to fall back to the current model. An already-started translation worker must complete its assigned task rather than recursively dispatching another worker.
+
+This is a per-user translation preference, not a global chat/coding model change and not a publisher-selected model. Do not commit personal config or credentials. Translation requests authorize sending the task's paper content to the selected backend, not an entire library or unrelated private files. A configured label is not proof of a real model call or a quality audit.
 
 ## After a DeepOrbit translation
 

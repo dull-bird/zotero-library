@@ -16,6 +16,7 @@ from zotero_catalog import (arxiv_id, checked_file, crossref_record, resolve_cat
 from zotero_workflow import apply_plan, build_plan, verify_plan
 from zotero_versions import (arxiv_version, edition_source, attach_receipt, fetch_original,
                              check_updates, validate_artifact_versions)
+from zotero_translation import configure_translation, show_config, translation_route
 
 
 def parser():
@@ -27,6 +28,17 @@ def parser():
     commands = p.add_subparsers(dest='command', required=True)
     commands.add_parser('doctor', help='Read installed code/schema, API availability and database counts')
     commands.add_parser('authorize', help='Ask the human for native local write authorization')
+    translation = commands.add_parser('translation', help='Choose current-agent or user-CLI translation; unset means ask the user')
+    translation_commands = translation.add_subparsers(dest='translation_command', required=True)
+    translation_commands.add_parser('show', help='Show private translation preferences; never invoke a model')
+    translation_commands.add_parser('route', help='Resolve the chosen translation route; no CLI or model execution')
+    translation_commands.add_parser('reset', help='Clear the choice so the agent asks again next time')
+    translation_set = translation_commands.add_parser('set', help='Persist the user\'s explicit translation choice')
+    translation_set.add_argument('--mode', choices=('agent', 'cli'), required=True)
+    cli_args = translation_set.add_mutually_exclusive_group()
+    cli_args.add_argument('--argv-json', help='CLI argument array, without credentials')
+    cli_args.add_argument('--cli-command', help='Quoted executable and arguments; split without shell execution')
+    translation_set.add_argument('--label', help='Optional human-readable CLI/model label, not proof of invocation')
     audit = commands.add_parser('source-audit', help='Export installed-source hashes and actual item schema')
     audit.add_argument('--out-dir', type=Path, required=True)
     inventory = commands.add_parser('inventory', help='Read committed data from a stable DB+WAL snapshot')
@@ -128,6 +140,17 @@ def make_manifest(args):
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    # Translation preferences must work without Zotero, its database or its write credentials.
+    if args.command == 'translation':
+        if args.translation_command == 'show':
+            return show_config(args.state)
+        if args.translation_command == 'route':
+            return translation_route(args.state)
+        if args.translation_command == 'reset':
+            return configure_translation(None, args.state)
+        return configure_translation(args.mode, args.state,
+                                     argv=json.loads(args.argv_json) if args.argv_json is not None else None,
+                                     command=args.cli_command, label=args.label)
     client = LocalClient(args.origin, args.state)
     if args.command == 'doctor':
         audit, schema = inspect_source(args.app)

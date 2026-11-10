@@ -6,9 +6,11 @@
 python3 -m unittest discover -s tests -v
 ```
 
-The suite has **77 offline tests**, checked locally on Python 3.9 and 3.12. CI uses Ubuntu 22.04 for Python 3.9 (no prebuilt package on newer runners) and the latest Ubuntu runner for Python 3.12. It uses synthetic metadata/PDF bytes, temporary SQLite files, mock clients and a loopback HTTP contract server. It does not access a real library or require Zotero to be installed.
+The suite has **103 offline tests**, checked locally on Python 3.9 and 3.12. CI uses Ubuntu 22.04 for Python 3.9 (no prebuilt package on newer runners) and the latest Ubuntu runner for Python 3.12. It uses synthetic metadata/PDF bytes, temporary SQLite files, mock clients and a loopback HTTP contract server. It does not access a real library or require Zotero to be installed.
 
 Coverage includes strong-identifier deduplication, title/author/DOI checks, protected fields, multipart stored dates, DB+WAL snapshots, stale versions, per-object failures inside HTTP 200, native three-phase upload contracts, partial recovery, idempotency, source/version separation, archive rN, receipts, and retaining old attachments. The top-level collection is tested as an aggregate, not an empty folder.
+
+Translation-routing tests cover an unselected first install, explicit current-agent/CLI selection, private owner-only configuration, reset, no implicit model fallback, no shell execution, invalid/credential-bearing commands, route-only behavior and operation without Zotero. These tests do not launch third-party models or establish that any user's provider credentials are ready.
 
 ## Live native acceptance — 2026-11-10
 

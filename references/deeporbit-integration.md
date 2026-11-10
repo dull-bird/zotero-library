@@ -4,6 +4,10 @@
 
 本 skill 不擅自修改或推送另一个仓库，也没有安装后台 watcher。
 
+## 翻译开始前的用户选择
+
+先按 [translation.md](translation.md) 读取本机翻译偏好：未配置时询问使用当前 agent 还是指定 CLI，用户明确选择后再保存。CLI 失败不得默默回退到别的模型；这项选择不改变聊天／编程的全局默认模型。`translation route` 只返回执行计划，真正的分节翻译仍由所选 agent／CLI 完成。
+
 ## 保留原流程
 
 `do.arxiv-translator` 负责下载 arXiv LaTeX／原文、分节翻译、xeCJK、编译和视觉完整性核验；成功产物归档到：

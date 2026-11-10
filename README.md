@@ -39,6 +39,30 @@ ln -s /absolute/path/to/zotero-library ~/.agents/skills/zotero-library
 
 如果目标路径已有内容，不要强行覆盖；先检查并备份。Pi 中执行 `/reload`，再用 `/skill:zotero-library`，或者直接请求整理文献。其他支持标准 Agent Skills 的客户端可以读取根目录 [SKILL.md](SKILL.md)。
 
+## 翻译模型／CLI 由用户选择
+
+发布版**不预选模型**。第一次请求新翻译时，agent 应先问：默认用当前 agent 的模型，还是用户指定的 CLI？导入已有译文时不需要问。
+
+```bash
+# 查看偏好；未配置时 needs_user_choice=true
+python3 scripts/zotero_library.py translation show
+
+# 用户选择当前 agent 的模型
+python3 scripts/zotero_library.py translation set --mode agent
+
+# 或者选择自己的 CLI（示例占位符需替换）
+python3 scripts/zotero_library.py translation set --mode cli \
+  --cli-command 'pi --model PROVIDER/MODEL --print --no-session --no-approve'
+
+# 返回供 agent 执行的路由，不运行 CLI／模型
+python3 scripts/zotero_library.py translation route
+
+# 清除选择，下次重新问
+python3 scripts/zotero_library.py translation reset
+```
+
+偏好保存在本机私有的 `~/.local/share/zotero-library/config.json`；通用示例见 [config.example.json](config.example.json)。未选择时 route 停止并返回 `TRANSLATION_CHOICE_REQUIRED`，不会暗用当前模型；CLI 失败也不偷偷切换。配置不改变 Pi 的聊天／编程默认模型。实际翻译仍由 agent／用户 CLI 执行，见 [translation.md](references/translation.md)。
+
 ## 第一次写入
 
 1. 保持 Zotero 运行，在 **设置 → 高级** 开启 *Allow other applications on this computer to communicate with Zotero*。
@@ -73,7 +97,7 @@ python3 scripts/zotero_library.py apply \
 ```text
 doctor · source-audit · inventory · scan · manifest · resolve · doi
 select-edition · plan · authorize · apply · verify · sync
-fetch-original · versions
+fetch-original · versions · translation {show,set,reset,route}
 ```
 
 详细流程见 [operations.md](references/operations.md)、[metadata-policy.md](references/metadata-policy.md)、[versions.md](references/versions.md) 和 [DeepOrbit 集成说明](references/deeporbit-integration.md)。
@@ -106,6 +130,8 @@ scripts/zotero_core.py       # 原生 API、源码/schema、只读快照
 scripts/zotero_catalog.py    # arXiv/Crossref、身份核验、分类
 scripts/zotero_workflow.py   # plan/apply/verify、日志与来源笔记
 scripts/zotero_versions.py   # 源版本、归档修订、固定下载、更新检查
+scripts/zotero_translation.py # 私有翻译偏好与执行路由，不调用模型
+config.example.json         # 无指定模型的通用配置示例
 references/                 # 策略和操作文档
 tests/                      # 单元、mock 工作流和 loopback HTTP 契约测试
 ```

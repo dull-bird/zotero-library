@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — 2026-11-10
+
+- Add private, per-user translation preferences: explicitly choose the current agent's model or a user-provided CLI; fresh installs remain unselected and must ask first.
+- Add `translation show/set/reset/route`, an unselected generic config example and agent workflow guidance. No publisher-specific provider/model default and no changes to global chat/coding settings.
+- Route resolution never runs a CLI/model, does not load commands from source repositories, and never silently falls back on missing executables or failed authentication.
+- Validate owner-only settings and common credential-bearing arguments; keep personal configuration outside the published repository.
+- Add 26 offline regressions, bringing the suite to 103 tests. Existing native Zotero write acceptance is unchanged.
+
 ## 1.1.1 — 2026-11-10
 
 - Complete live native write acceptance on Zotero 10.0.8 / schema 44 / macOS arm64: one-paper pilot, two-paper batch and full 17-paper ingestion with 17 stored PDFs.

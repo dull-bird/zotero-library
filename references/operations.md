@@ -12,6 +12,7 @@
 
 | 命令 | 作用 | 改 Zotero？ |
 |---|---|---|
+| `translation show / set / reset / route` | 用户级翻译方式（当前 agent 或指定 CLI）；未选先问，路由不调用模型 | 否 |
 | `doctor` | 当前安装源码、schema、本地 API、真实库计数 | 否 |
 | `source-audit --out-dir DIR` | 保存源码哈希及 schema | 否 |
 | `inventory --out FILE` | 私有 DB+WAL 快照读出的条目与分类 | 否 |
@@ -39,6 +40,7 @@
 
 ```text
 authorization.json       # 仅用户选择持久授权后保存，0600，不能读给模型／发到聊天
+config.json              # 私有翻译偏好，0600；不自动读取项目提供的命令配置
 apply.lock               # 阻止本工具同时执行两次 apply
 metadata-cache/          # 官方公共元数据缓存
 download-receipts/       # 固定版本原文下载凭证；外部伪造的同名 sidecar 不自动可信
@@ -69,6 +71,8 @@ runs/<run>/
 - 身份／标题／作者不符：放待复核，不能用“字段看起来更完整”作为替换理由。
 - `VERSION_CONFLICT`：同一字节有矛盾的源版本记录时复核，不把旧 v1 自动重贴成 v2；保留两次来源证据。
 - 版本号未知：不是故障，也不是“已是最新版”；不凭 filename／最新元数据补猜。
+- `TRANSLATION_CHOICE_REQUIRED`：先问用户用当前 agent 还是指定 CLI，保存明确选择后再开始新翻译。
+- `TRANSLATION_CLI_NOT_FOUND`／外部 CLI 认证失败：停止并说明，不擅自换模型。路由解析成功也不代表模型实际调用成功。
 
 不会自动删除写了一半的条目或恢复整库，因为这可能破坏用户在此期间新增的内容。要回退先读运行日志，列出确切新增对象，征求确认后通过 Zotero 支持的接口处理。完整备份恢复必须退出 Zotero，且应另行指导，不能趁程序运行时替换数据库。
 

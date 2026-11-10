@@ -13,6 +13,7 @@ htmlcov/
 .env.*
 !.env.example
 authorization.json
+config.json
 localAPIKeys.json
 *.pem
 *.key
