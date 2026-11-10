@@ -1,0 +1,49 @@
+# Python and local tooling
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+
+# Secrets and local authorization
+.env
+.env.*
+!.env.example
+authorization.json
+localAPIKeys.json
+*.pem
+*.key
+
+# User libraries, attachments and database snapshots: never publish
+*.sqlite
+*.sqlite-*
+*.sqlite.*
+*.db
+*.db-*
+*.pdf
+*.PDF
+*.ris
+*.rdf
+storage/
+
+# Private runtime artifacts and evidence
+plan.json
+*-plan.json
+manifest.json
+catalog.json
+inventory.json
+journal.json
+verification.json
+*.source.json
+metadata-cache/
+download-receipts/
+version-checks/
+preparation/
+preparations/
+runs/
+database-backup/
+local-state/
+*.log
